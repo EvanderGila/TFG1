@@ -1,0 +1,19 @@
+import torch
+import torch.optim as optim
+import torch.nn as nn
+import preprocess as p
+import architecture as arch
+
+
+data_dir = './dataset'
+batch_size = 32
+img_size = 32
+# learning_rate = 0.001
+# num_epochs = 10
+
+# Cargar los datos
+train_loader = p.get_data_loaders(data_dir, batch_size=batch_size, img_size=img_size)
+
+# Crear el modelo
+model = arch.CNN()
+
