@@ -58,7 +58,7 @@ class CNN_3C(nn.Module):
         Al aplanar el tensor conseguimos que el tensor que teníamos antes [batch_size, 256, 8, 8] ([Batch_size, C, H, W]), aplicando x.view(-1, 256 * 8 * 8) se queda en [batch_size, 16384], es decir, deja la dimensión de batchsize y multiplica las otras dimensiones dejando un tensor [batch_size, 16384]
         '''
         # Aplanar el tensor 
-        x = x.view(-1, out_3 * new_image_size * new_image_size)  # (batch_size, 256 * 8 * 8)
+        x = x.view(-1, self.out_3 * self.image_size * self.image_size)  # (batch_size, 256 * 8 * 8)
         
         # Capas totalmente conectadas
         x = F.relu(self.fc1(x))  # (batch_size, 512)
@@ -113,7 +113,7 @@ class CNN_4C(nn.Module):
         #FULLY CONNECTED LAYERS
         
         # Aplanar el tensor 
-        x = x.view(-1, out_4* new_image_size * new_image_size)  # (batch_size, 512 * 4 * 4)
+        x = x.view(-1, self.out_4* self.image_size * self.image_size)  # (batch_size, 512 * 4 * 4)
         
         # Capas totalmente conectadas
         x = F.relu(self.fc1(x))  # (batch_size, 512)
@@ -141,14 +141,14 @@ class CNN_B3C(nn.Module):
         self.conv1c = nn.Conv2d(in_channels=out_1, out_channels= out_1, kernel_size=3, padding=1)  
         self.bn1 = nn.BatchNorm2d(out_1)  # Normaliza las salidas de conv1
         #Segundo bloque
-        self.conv2a= nn.Conv2d(in_channels= out_1, out_channels= out_2, kernel_size=3, padding=1)  
-        self.conv2b nn.Conv2d(in_channels= out_2 out_channels= out_2, kernel_size=3, padding=1)  
-        self.conv2c nn.Conv2d(in_channels= out_2 out_channels= out_2, kernel_size=3, padding=1)  
+        self.conv2a = nn.Conv2d(in_channels= out_1, out_channels= out_2, kernel_size=3, padding=1)  
+        self.conv2b = nn.Conv2d(in_channels= out_2, out_channels= out_2, kernel_size=3, padding=1)  
+        self.conv2c = nn.Conv2d(in_channels= out_2, out_channels= out_2, kernel_size=3, padding=1)  
         self.bn2 = nn.BatchNorm2d(out_2)  
         #Tercer bloque
         self.conv3a= nn.Conv2d(in_channels=out_2, out_channels= out_3, kernel_size=3, padding=1)  
-        self.conv3b nn.Conv2d(in_channels=out_3 out_channels= out_3, kernel_size=3, padding=1) 
-        self.conv3c nn.Conv2d(in_channels=out_3 out_channels= out_3, kernel_size=3, padding=1)  
+        self.conv3b = nn.Conv2d(in_channels=out_3, out_channels= out_3, kernel_size=3, padding=1) 
+        self.conv3c = nn.Conv2d(in_channels=out_3, out_channels= out_3, kernel_size=3, padding=1)  
         self.bn3 = nn.BatchNorm2d(out_3)  
         
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)  # Kernel=2 indica que su ventana de pooling es de 2x2 y stride=2 indica que se moverá 2 píxeles evitando solapamiento
@@ -163,22 +163,22 @@ class CNN_B3C(nn.Module):
         # Aplicar las capas de convolución, activaciones(Relu) y pooling 
         # Por orden, se aplica la capa convolucional, se normalizan las activaciones de la capa, se aplica la función Relu y se hace un pool
         #Primer bloque
-        x = self.pool(F.relu(self.bn1(self.conv1a(x)))) # (batch_size, 64, 64) -> (batch_size, 64, 32, 32)
-        x = self.pool(F.relu(self.bn1(self.conv1b(x)))) # (batch_size, 64, 64) -> (batch_size, 64, 32, 32)
+        x = F.relu(self.bn1(self.conv1a(x))) # (batch_size, 64, 64) -> (batch_size, 64, 32, 32)
+        x = F.relu(self.bn1(self.conv1b(x))) # (batch_size, 64, 64) -> (batch_size, 64, 32, 32)
         x = self.pool(F.relu(self.bn1(self.conv1c(x)))) # (batch_size, 64, 64) -> (batch_size, 64, 32, 32)
         #Segundo bloque
-        x = self.pool(F.relu(self.bn2(self.conv2a(x)))) # (batch_size, 128, 32, 32) -> (batch_size, 128, 16, 16)
-        x = self.pool(F.relu(self.bn2(self.conv2b(x)))) # (batch_size, 128, 32, 32) -> (batch_size, 128, 16, 16)
+        x = F.relu(self.bn2(self.conv2a(x))) # (batch_size, 128, 32, 32) -> (batch_size, 128, 16, 16)
+        x = F.relu(self.bn2(self.conv2b(x))) # (batch_size, 128, 32, 32) -> (batch_size, 128, 16, 16)
         x = self.pool(F.relu(self.bn2(self.conv2c(x)))) # (batch_size, 128, 32, 32) -> (batch_size, 128, 16, 16)
         #Tercer bloque
-        x = self.pool(F.relu(self.bn3(self.conv3a(x)))) # (batch_size, 256, 16, 16) -> (batch_size, 256, 8, 8)
-        x = self.pool(F.relu(self.bn3(self.conv3b(x)))) # (batch_size, 256, 16, 16) -> (batch_size, 256, 8, 8)
+        x = F.relu(self.bn3(self.conv3a(x))) # (batch_size, 256, 16, 16) -> (batch_size, 256, 8, 8)
+        x = F.relu(self.bn3(self.conv3b(x))) # (batch_size, 256, 16, 16) -> (batch_size, 256, 8, 8)
         x = self.pool(F.relu(self.bn3(self.conv3c(x)))) # (batch_size, 256, 16, 16) -> (batch_size, 256, 8, 8)
         
         #FULLY CONNECTED LAYERS
 
         # Aplanar el tensor 
-        x = x.view(-1, out_3 * new_image_size * new_image_size)  # (batch_size, 256 * 8 * 8)
+        x = x.view(-1, self.out_3 * self.image_size * self.image_size)  # (batch_size, 256 * 8 * 8)
         
         # Capas totalmente conectadas
         x = F.relu(self.fc1(x))  # (batch_size, 512)

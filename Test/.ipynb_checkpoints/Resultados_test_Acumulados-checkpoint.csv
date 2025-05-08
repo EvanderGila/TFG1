@@ -1,2 +1,0 @@
-Model,Accuracy (ACC),Area Under the Curve (AUC),True Positive Rate (TPR),False Positive Rate (FPR)
-Model1_B3C_3_NO.pth,0.5104,0.8558,0.9996,0.9788

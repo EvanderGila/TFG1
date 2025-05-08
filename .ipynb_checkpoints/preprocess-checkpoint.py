@@ -171,3 +171,18 @@ def get_media_std_training(data_dir):
         
         print(f"Error, no hay 70000 muestras, hay:{num_muestras}")
   #También creo que se podría haber calculado sin tener que muktiplicar en cada iteración del for por el images.size(0), simplemente llevando un contador en vez de del num_muestras, de el número de iteraciones (pero habría que tener controlado que la última iteración puede que el batch no estuviera completo y sería impreciso), y en vez de dividir por el num_muestras divides por el num_iteraciones al final
+def get_test_loader(data_dir, batch_size=32, img_size=64):
+    
+     #Transformamos las imágenes en un tensor, antes reescalando las imágenes a 64x64 porque el entrenamiento se ha hecho así, también las normalizamos con la media de los datos del training
+    transform = transforms.Compose([
+        transforms.Resize((img_size, img_size)),       
+        transforms.ToTensor(), 
+        transforms.Normalize(mean=[0.4718, 0.4628, 0.4176],std=[0.2361, 0.2360, 0.2636])  #Datos de mean y std del conjunto de TRAINING
+        
+    ])
+    
+    test_dataset = datasets.ImageFolder(os.path.join(data_dir), transform=transform)
+    
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False) #Dejamos suffle a false porque estamos en test y no hace falta
+  
+    return test_loader

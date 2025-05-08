@@ -9,6 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
+import numpy as np
 
 
 def display_directory_images(exp_size, images_dir):
@@ -78,7 +79,7 @@ def display_images(n_label, n_perlabel, images_desnormalizadas):
     
     plt.subplots_adjust(hspace=0.01)  # Reduce el valor de hspace para acercar las filas
 
-    fig.savefig(os.path.join('Show', "Ejemplo_5_imagenes3.svg"), format='svg')   
+    fig.savefig(os.path.join('Show', "Ejemplo_5_imagenes_DA.svg"), format='svg')   
     
     #Mostramos la figura
     plt.show()
@@ -167,6 +168,7 @@ def guardar_hiperparámetros(train_loss, train_acc, val_loss, val_acc, num_epoch
         
 def guardar_graficas(epochs, train_loss_values, train_acc_values, val_loss_values, val_acc_values, model_name):
     
+    num_epochs = len(epochs) + 1
     # Crear la figura y los ejes
     plt.figure(figsize=(12, 6))
 
@@ -185,6 +187,9 @@ def guardar_graficas(epochs, train_loss_values, train_acc_values, val_loss_value
     plt.ylabel('Loss')
     plt.grid(True)
     plt.legend()
+    ticks = np.arange(1, num_epochs, 1)
+    plt.xticks(ticks, [int(x) for x in ticks]) # Formato a enteros
+    plt.tight_layout()
 
     # Gráfica del Accuracy
     plt.subplot(1, 2, 2)  
@@ -201,6 +206,9 @@ def guardar_graficas(epochs, train_loss_values, train_acc_values, val_loss_value
     plt.ylabel('Accuracy')
     plt.grid(True)
     plt.legend()
+    ticks = np.arange(1, num_epochs, 1)
+    plt.xticks(ticks, [int(x) for x in ticks]) # Formato a enteros
+    plt.tight_layout()
     
     '''
     #Conseguir la fila de csv:
@@ -250,7 +258,6 @@ def calcular_matriz_confusion(model, data_loader, device, model_name):
     plt.xlabel('Predicted Label')
     plt.ylabel('True Label')
     plt.title('Confusion Matrix')
-    plt.show()
     
     #Guardar matriz de confusión
     '''
@@ -269,6 +276,7 @@ def calcular_matriz_confusion(model, data_loader, device, model_name):
         else:
             plt.savefig(matriz_path, format='svg')
             print(f"Matriz guardada en {matriz_path}")
+            plt.show()
 
     except Exception as e:
         print(f"Ocurrió un error al intentar guardar la matriz: {e}")
@@ -277,11 +285,11 @@ def calcular_matriz_confusion(model, data_loader, device, model_name):
 
 def crear_nombre_modelo(arch, lr, da):
     #Creamos el nombre del modelo inicial
-    if lr == 0.01:
+    if lr == 0.001:
         name = f"_{arch}_1_{da}"
-    elif lr == 0.001:
-        name = f"_{arch}_2_{da}"
     elif lr == 0.0001:
+        name = f"_{arch}_2_{da}"
+    elif lr == 0.0002:
         name = f"_{arch}_3_{da}"
     else:
         print("Error en el lr")
@@ -301,4 +309,169 @@ def crear_nombre_modelo(arch, lr, da):
         if not os.path.exists(aux_path):
             return f"{version}{name}"
         version += 1
+
+
+def save_test_ConfusionMatrix(cm, model_name):
+    
+    # Creación
+    plt.figure(figsize=(6, 6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=['REAL', 'FAKE'], yticklabels=['REAL', 'FAKE'], annot_kws={"size": 16})
+    plt.xlabel('Predicted Label', fontsize=16)
+    plt.ylabel('True Label', fontsize=16)
+    plt.title('Confusion Matrix')
+    
+    #Guardar matriz de confusión
+    plt.tight_layout() 
+    matriz_path = f'./Test/MatrixTest_{model_name}.svg'
+    
+    try:
+        if os.path.exists(matriz_path):
+            print(f"El archivo {matriz_path} ya existe, no se sobrescribirá.")
+        else:
+            plt.savefig(matriz_path, format='svg')
+            print(f"Matriz guardada en {matriz_path}")
+            plt.close()
+
+    except Exception as e:
+        print(f"Ocurrió un error al intentar guardar la matriz: {e}")
+        
+def save_test_results(model_name, acc, auc, tpr, fpr):
+    
+    #Truncamos el valor de auc
+    rounded_auc = round(auc, 4)
+    
+    #Definimos la ruta a guardar
+    csv_folder = 'Test'
+    csv_file = os.path.join(csv_folder, 'Resultados_test.csv')
+    
+    # Datos a guardar
+    data = [
+        {
+            "Model": model_name,
+            "Accuracy (ACC)": acc,
+            "Area Under the Curve (AUC)": rounded_auc,
+            "True Positive Rate (TPR)": tpr,
+            "False Positive Rate (FPR)": fpr
+        }
+    ]
+    
+    try:
+        with open(csv_file, mode='a', newline='') as file:  # 'a' para añadir
+            writer = csv.DictWriter(file, fieldnames=data[0].keys())
+    
+            # Si el archivo no existe, escribir la cabecera
+            if file.tell() == 0:
+                writer.writeheader()
+
+            # Añadir los datos
+            writer.writerows(data)
+    
+            print(f"Resultados guardados en {csv_file}")
+    except Exception as e:
+        print(f"Error al guardar los resultados: {e}")
+
+def save_test_results_prueba(model_name, acc, auc, tpr, fpr):
+    
+    #Truncamos el valor de auc
+    rounded_auc = round(auc, 4)
+    
+    #Definimos la ruta a guardar
+    csv_folder = 'Test'
+    csv_file = os.path.join(csv_folder, 'Resultados_test_5_Thresholds.csv')
+    
+    # Datos a guardar
+    data = [
+        {
+            "Model": model_name,
+            "Accuracy (ACC)": acc,
+            "Area Under the Curve (AUC)": rounded_auc,
+            "True Positive Rate (TPR)": tpr,
+            "False Positive Rate (FPR)": fpr
+        }
+    ]
+    
+    try:
+        with open(csv_file, mode='a', newline='') as file:  # 'a' para añadir
+            writer = csv.DictWriter(file, fieldnames=data[0].keys())
+    
+            # Si el archivo no existe, escribir la cabecera
+            if file.tell() == 0:
+                writer.writeheader()
+
+            # Añadir los datos
+            writer.writerows(data)
+    
+            print(f"Resultados guardados en {csv_file}")
+    except Exception as e:
+        print(f"Error al guardar los resultados: {e}")
+    
+    
+def save_roc(fpr_curve, tpr_curve, auc, tprs, fprs, auc_umbral, model_name):
+    '''
+    plt.plot(fpr_curve, tpr_curve, marker='.')
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title(f'ROC Curve - {model_name}')
+    plt.grid(True)
+    plt.show()
+    '''
+    
+    plt.figure(figsize=(8, 6))
+    plt.plot(fpr_curve, tpr_curve, color='darkorange', lw=2, label=f'ROC curve (AUC = {auc:.2f})')
+    # Añadir línea diagonal (clasificador aleatorio)
+    plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')  
+    # Añadir el punto específico (umbral = 0.5)
+    plt.plot(fprs, tprs, linewidth=0.7, color='red', label=f'5 Thresholds (AUC = {auc_umbral:.2f})')
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title(f'ROC Curve - {model_name}')
+    plt.legend(loc="lower right")
+    
+    roc_path = f'./Test/ROC_{model_name}.svg'
+    
+    try:
+        if os.path.exists(roc_path):
+            print(f"El archivo {roc_path} ya existe, no se sobrescribirá.")
+        else:
+            plt.savefig(roc_path, format='svg')
+            print(f"Grafica ROC guardada en {roc_path}")
+            plt.close()
+
+    except Exception as e:
+        print(f"Ocurrió un error al intentar guardar la grafica ROC: {e}")
+        
+        
+        
+def save_roc_three(tprs_3C, fprs_3C, auc_3C, tprs_4C, fprs_4C, auc_4C, tprs_B3C, fprs_B3C, auc_B3C):
+
+    
+    plt.figure(figsize=(8, 6))
+    #Model3C
+    plt.plot(fprs_3C, tprs_3C, color='darkorange', linewidth=1, label=f'ROC curve Model3C (AUC = {auc_3C:.3f})')
+    #Model4C
+    plt.plot(fprs_4C, tprs_4C, color='blue', linewidth=1, label=f'ROC curve Model4C (AUC = {auc_4C:.3f})')
+    #ModelB3C
+    plt.plot(fprs_B3C, tprs_B3C, color='red', linewidth=1, label=f'ROC curve ModelB3C (AUC = {auc_B3C:.3f})')
+    # Añadir línea diagonal (clasificador aleatorio)
+    plt.plot([0, 1], [0, 1], color='0.8', lw=2, linestyle='--')  
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title(f'ROC Curves Model3C - Model4C - ModelB3C')
+    plt.legend(loc="lower right")
+    
+    roc_path = f'./Test/ROC_ALL_MODELS.svg'
+    
+    try:
+        if os.path.exists(roc_path):
+            print(f"El archivo {roc_path} ya existe, no se sobrescribirá.")
+            plt.close()
+        else:
+            plt.savefig(roc_path, format='svg')
+            print(f"Grafica ROC guardada en {roc_path}")
+            plt.close()
+
+    except Exception as e:
+        print(f"Ocurrió un error al intentar guardar la grafica ROC: {e}")
+    
+
     
