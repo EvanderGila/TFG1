@@ -1,0 +1,6 @@
+En esta carpeta se encuentran los CSVs que contienen todas las métricas recopiladas para el test.
+
+En los archivos Resultados_test.csv, Resultados_test_3C.csv, Resultados_test_4C.csv y Resultados_test_B3C.csv
+se encuentran los resultados con el AUC calculado con un número elevado de Thresholds.
+
+En el archivo Resultados_test_5_Thresholds.csv se encuentran los resultados obtenidos con 5 Thresholds, los resultados finales.

@@ -1,0 +1,5 @@
+En esta carpeta se encuentran los resultados y métricas de la parte de test de todos los modelos entrenados:
+
+En la carpeta de ConfusionMatrices se encuentran todas las Matrices de confusión obtenidas durante el test de los modelos.
+En la carpeta de Results se encuentran los CSVs de todas las métricas recopiladas durante el test.
+En la carpeta de ROC se encuentran las gráficas que representan la curva ROC y el AUC de todos los modelos.

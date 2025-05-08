@@ -1,4 +1,0 @@
-Loss,Accuracy,Num_Epochs,Learning_Rate,Batch_Size,Img_Size
-0.1842,0.9276,2,0.001,32,64
-0.1229,0.9529,4,0.001,32,64
-0.0236,0.9928,10,0.001,32,64

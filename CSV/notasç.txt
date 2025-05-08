@@ -1,1 +1,0 @@
-torch.save(model.state_dict(), path_visualization+'.pth')

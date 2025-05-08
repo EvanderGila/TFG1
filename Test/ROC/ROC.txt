@@ -1,0 +1,5 @@
+En esta carpeta se encuentran los gráficos de ROC y AUC.
+
+En la carpeta de ROC_all_models se encuentran todas las gráficas en formato svg de todos los modelso entrenados.
+En la carpeta de ROC_best_models se encuentra la gráfica que combina las tres AUC de los tres mejores modelos de cada arquitectura.
+En la carpeta de ROC_one_Threshold se encuentran tres modelos de prueba con un solo Threshold.

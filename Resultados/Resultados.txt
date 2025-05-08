@@ -1,0 +1,5 @@
+En esta carpeta se muestran los resultados del entrenamiento.
+
+La jerarquía y nomenclatura de los archivos contenidos está presente en el archivo svg llamado "JerarquiaResultados" contenido en esta misma carpeta, que divide los resultados en los directorios; Graphs, Matrices y Models.
+Se encuentra un archivo CSV que contiene los resultados del proceso de entrenamiento y validación de todos los modelos  entrenados, indicando parámetros como el número de epochs, el batch size o el tamaño de la imagen.
+En este mismo archivo también se indica la precisión y la pérdida del entrenamiento y la validación, así como el epoch en el que se ha decidido guardar el modelo (En función de su mejor etapa de validación).
