@@ -1,2 +1,0 @@
-Loss-Train,Accuracy-Train,Loss-Validation,Accuracy-Validation,Num_Epochs,Learning_Rate,Batch_Size,Img_Size
-0.0343,0.9879,0.2535,0.942,10,0.001,32,64
