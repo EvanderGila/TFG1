@@ -1,0 +1,1 @@
+En esta carpeta se encuentran algunas imágenes en formato svg del dataset, tanto el original como una vez aplicado DA (DataAugmentation).
