@@ -1,4 +1,4 @@
-# ***Título del proyecto***
+# ***Redes neuronales convolucionales para detectar imágenes sintéticas***
 
 ## *Evander Gila Reques, TFG de Ing. de Software*
 
